@@ -118,9 +118,9 @@ fun LoginCompose(
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(
-            onClick = { if ( model.login("teste", "teste") !! > 0) {
+            onClick = { //if ( model.login("teste", "teste") !! > 0) { }
                     onSuccess()
-                } },
+                 },
             shape = RoundedCornerShape(50.dp),
             modifier = Modifier
                 .width(350.dp)
