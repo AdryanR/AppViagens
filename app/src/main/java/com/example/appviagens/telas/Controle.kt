@@ -7,7 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.appviagens.ScreenManager
 
 @Composable
-fun Controle(){
+fun Controle() {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = ScreenManager.Login.route) {

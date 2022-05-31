@@ -1,6 +1,5 @@
 package com.example.appviagens.telas
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -13,28 +12,19 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.appviagens.component.AppBarTelas
-import com.example.appviagens.viewModel.Viagem
+import com.example.appviagens.model.Viagem
 import android.app.DatePickerDialog
-import android.view.MotionEvent
 import android.widget.DatePicker
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.rounded.CalendarToday
 import androidx.compose.material.icons.rounded.Surfing
 import androidx.compose.material.icons.rounded.Work
 import androidx.compose.runtime.*
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavHostController
-import com.example.appviagens.ScreenManager
 import com.example.appviagens.component.CustomTopAppBar
 import com.example.appviagens.ui.theme.Gainsoro
 import java.util.*
@@ -47,7 +37,7 @@ fun FormViagem(navController: NavHostController, id: Int?) {
             CustomTopAppBar(navController, "Nova Viagem", true)
         }
 
-        ) {
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize(),
@@ -63,7 +53,7 @@ fun FormViagem(navController: NavHostController, id: Int?) {
             Text(text = "Profile Form ${id}")
             Spacer(modifier = Modifier.padding(20.dp))
             OutlinedTextField(
-                label = { Text(text = "Destino")},
+                label = { Text(text = "Destino") },
                 singleLine = true,
                 value = model.destino,
                 onValueChange = { model.destino = it },

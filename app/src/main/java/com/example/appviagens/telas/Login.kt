@@ -1,31 +1,24 @@
 package com.example.appviagens.telas
 
+import android.app.Application
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,8 +27,9 @@ import androidx.navigation.NavHostController
 import com.example.appviagens.R
 import com.example.appviagens.ScreenManager
 import com.example.appviagens.component.PasswordField
-import com.example.appviagens.viewModel.Pessoa
-import kotlinx.coroutines.delay
+import com.example.appviagens.model.Pessoa
+import com.example.appviagens.viewModel.PessoaViewModel
+import com.example.appviagens.viewModel.PessoaViewModelFactory
 
 @Composable
 fun EstadoLogin(navController: NavHostController) {
@@ -46,7 +40,7 @@ fun EstadoLogin(navController: NavHostController) {
         mutableStateOf("")
     }
     if (isLogged) {
-        CircularProgressIndicator(modifier = Modifier.size(width = 100.dp, height = 100.dp))
+        //CircularProgressIndicator(modifier = Modifier.size(width = 100.dp, height = 100.dp))
         navController.navigate(ScreenManager.Home.route)
     } else {
         LoginCompose(
@@ -56,7 +50,8 @@ fun EstadoLogin(navController: NavHostController) {
             onSuccess = {
                 isLogged = true
             },
-            navController = navController)
+            navController = navController
+        )
     }
 }
 
@@ -65,7 +60,8 @@ fun LoginCompose(
 //    login: String, // PEGAR O NOME, PODE SER O ID DEPOIS...
     onUserChange: (String) -> Unit,
     onSuccess: () -> Unit,
-    navController: NavHostController) {
+    navController: NavHostController
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         ClickableText(
             text = AnnotatedString("Cadastre-se"),
@@ -82,12 +78,17 @@ fun LoginCompose(
         )
     }
     Column(
-            modifier = Modifier.padding(10.dp),
-    verticalArrangement = Arrangement.Center,
-    horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.padding(10.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        val model: Pessoa = viewModel()
+        val ctx = LocalContext.current
+        val app = ctx.applicationContext as Application
+        val model:
+                PessoaViewModel = viewModel(
+            factory = PessoaViewModelFactory(app)
+        )
 
         Image(
             painter = painterResource(R.drawable.logo),
@@ -112,12 +113,14 @@ fun LoginCompose(
             onValueChange = { model.login = it })
 
         Spacer(modifier = Modifier.height(20.dp))
-        PasswordField(value = model.senha, onChange = { model.senha = it})
+        PasswordField(value = model.senha, onChange = { model.senha = it })
 
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(
-            onClick = { onSuccess() },
+            onClick = { if ( model.login("teste", "teste") !! > 0) {
+                    onSuccess()
+                } },
             shape = RoundedCornerShape(50.dp),
             modifier = Modifier
                 .width(350.dp)

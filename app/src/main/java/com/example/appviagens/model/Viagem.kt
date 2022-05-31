@@ -1,4 +1,4 @@
-package com.example.appviagens.viewModel
+package com.example.appviagens.model
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

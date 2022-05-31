@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
 //                    val systemUiController = rememberSystemUiController()
 //                    systemUiController.setSystemBarsColor(
 //                        color = Color.Transparent)
-                    Controle()
+                    Controle() // chama rotas de login até home //
                 }
             }
         }
