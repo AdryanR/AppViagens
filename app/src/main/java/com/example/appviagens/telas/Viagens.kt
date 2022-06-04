@@ -1,10 +1,15 @@
 package com.example.appviagens.telas
 
+import android.app.Application
 import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -14,23 +19,31 @@ import androidx.compose.material.icons.rounded.Flight
 import androidx.compose.material.icons.rounded.Surfing
 import androidx.compose.material.icons.rounded.Work
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.navigation
+import com.example.appviagens.R
 import com.example.appviagens.component.AppBarTelas
 import com.example.appviagens.ui.theme.Gainsoro
-import com.example.appviagens.model.ViagemData
+import com.example.appviagens.model.Viagem
+import com.example.appviagens.viewModel.ViagemViewModel
+import com.example.appviagens.viewModel.ViagemViewModelFactory
 import java.text.DecimalFormat
 
 @Composable
@@ -81,45 +94,107 @@ fun NavGraphBuilder.formViagemGrap(navController: NavHostController) {
 
 @Composable
 fun ListaViagens(navController: NavHostController) {
-    val viagens = listOf(
-        ViagemData(1, "São Paulo", "20/05/2022", "20/05/2022", 5000.00, 1, 1),
-        ViagemData(2, "Rio de Janeiro", "10/05/2022", "20/05/2022", 5000.00, 2, 2),
-        ViagemData(3, "Santa Catarina", "11/05/2022", "20/05/2022", 5000.00, 1, 1),
-        ViagemData(4, "Brasilia", "15/05/2022", "20/05/2022", 5000.00, 2, 2),
-        ViagemData(5, "São Paulo", "16/05/2022", "20/05/2022", 5000.00, 1, 1),
-        ViagemData(6, "Agrolândia", "18/05/2022", "20/05/2022", 5000.00, 2, 2),
-        ViagemData(7, "Balneário Camboriu", "11/06/2022", "20/06/2022", 5000.00, 1, 1),
-        ViagemData(8, "Santos", "19/05/2022", "20/05/2022", 5000.00, 2, 2),
-        ViagemData(9, "Miami", "19/05/2022", "20/05/2022", 5000.00, 1, 1),
+//    val viagens = listOf(
+//        Viagem("São Paulo", "20/05/2022", "20/05/2022", 5000.00, 1, 1),
+//        Viagem("Rio de Janeiro", "10/05/2022", "20/05/2022", 5000.00, 2, 2),
+//    )
+    val ctx = LocalContext.current
+    val app = ctx.applicationContext as Application
+    val model:
+            ViagemViewModel = viewModel(
+        factory = ViagemViewModelFactory(app)
     )
+    //val viagens = listOf(model.allViagensByUser)
+    //                            AQUI PASSA O ID DO USER LOGADO...
+    val viagens by model.allViagensByUser(1).observeAsState(listOf())
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         items(items = viagens) { v ->
-            ViagensView(navController = navController, v)
+            ViagensView(navController = navController, v, model)
         }
     }
 }
 
 @Composable
-fun ViagensView(navController: NavHostController, viagem: ViagemData) {
+fun ViagensView(navController: NavHostController, viagem: Viagem, model: ViagemViewModel) {
     val df = DecimalFormat("0.00")
     val context = LocalContext.current
+
+    var aExcluir by remember {
+        mutableStateOf(false)
+    }
+    if (aExcluir) {
+        val openDialog = remember { mutableStateOf(true) }
+        AlertDialog(
+            onDismissRequest = { openDialog.value = false },
+            text = {
+                Text(
+                    "Deseja excluir essa viagem e seus dados?",
+                    style = MaterialTheme.typography.h6,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        model.deleteByID(viagem.id)
+                        Toast
+                            .makeText(
+                                context,
+                                "Viagem apagada!",
+                                Toast.LENGTH_SHORT
+                            )
+                            .show()
+                        aExcluir = false
+                    }
+                ) {
+                    Text(
+                        "Excluir!", fontSize = 18.sp,
+                        color = Color.White
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        openDialog.value = false
+                        aExcluir = false
+                    }
+                ) {
+                    Text("Não", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                }
+            },
+            backgroundColor = colorResource(id = R.color.status_bar),
+            contentColor = Color.White
+        )
+    }
     Card(
         elevation = 10.dp,
         shape = RoundedCornerShape(5.dp),
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 8.dp)
-            .clickable {
-                Toast
-                    .makeText(
-                        context,
-                        "ID Viagem: ${viagem.id}",
-                        Toast.LENGTH_SHORT
-                    )
-                    .show()
-                navController.navigate("form/" + viagem.id)
+//            .clickable {
+//                Toast
+//                    .makeText(
+//                        context,
+//                        "ID Viagem: ${viagem.id}",
+//                        Toast.LENGTH_SHORT
+//                    )
+//                    .show()
+//                navController.navigate("form/" + viagem.id)
+//            }
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = {
+                        navController.navigate("form/" + viagem.id)
+                    },
+                    onLongPress = {
+                        aExcluir = true;
+                    },
+                )
             }
     ) {
         Row(
@@ -174,3 +249,4 @@ fun ViagensView(navController: NavHostController, viagem: ViagemData) {
     }
 
 }
+

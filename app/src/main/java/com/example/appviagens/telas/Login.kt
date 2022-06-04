@@ -28,8 +28,7 @@ import com.example.appviagens.R
 import com.example.appviagens.ScreenManager
 import com.example.appviagens.component.PasswordField
 import com.example.appviagens.model.Pessoa
-import com.example.appviagens.viewModel.PessoaViewModel
-import com.example.appviagens.viewModel.PessoaViewModelFactory
+import com.example.appviagens.viewModel.*
 
 @Composable
 fun EstadoLogin(navController: NavHostController) {
@@ -70,7 +69,7 @@ fun LoginCompose(
                 .padding(20.dp),
             onClick = { navController.navigate(ScreenManager.Cadastro.route) },
             style = TextStyle(
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 fontFamily = FontFamily.Default,
                 textDecoration = TextDecoration.Underline,
 //                color = Purple700

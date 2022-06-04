@@ -5,12 +5,15 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.appviagens.model.Pessoa
+import com.example.appviagens.model.TipoViagem
+import com.example.appviagens.model.Viagem
 
-@Database(entities = arrayOf(Pessoa::class), version = 1)
+@Database(entities = arrayOf(Pessoa::class, Viagem::class, TipoViagem::class), version = 2)
 abstract class Connection : RoomDatabase() {
 
     abstract fun pessoaDao(): PessoaDao
-    //abstract fun outroDao(): OutroDao
+    abstract fun viagemDao(): ViagemDao
+    abstract fun tipoViagemDao(): TipoViagemDao
 
     // Desing Pattern - Singleton
     companion object {

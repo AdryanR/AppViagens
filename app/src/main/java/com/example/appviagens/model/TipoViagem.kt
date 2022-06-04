@@ -1,15 +1,14 @@
 package com.example.appviagens.model
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-class TipoViagem : ViewModel() {
+@Entity
+data class TipoViagem(
 
-    var id by mutableStateOf("")
+    val tipo: String // lazer = 1 | negocios = 2
 
-    var tipo by mutableStateOf("") // lazer = 1 | negocios = 2
-
-
+) {
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0
 }

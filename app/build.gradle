@@ -80,4 +80,5 @@ dependencies {
     implementation "androidx.room:room-paging:2.4.1"
 
     implementation "androidx.room:room-ktx:$room_version"
+    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
 }

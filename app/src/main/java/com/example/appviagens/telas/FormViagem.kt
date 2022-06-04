@@ -1,5 +1,6 @@
 package com.example.appviagens.telas
 
+import android.app.Application
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -12,9 +13,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.appviagens.model.Viagem
 import android.app.DatePickerDialog
+import android.util.Log
 import android.widget.DatePicker
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -22,16 +24,34 @@ import androidx.compose.material.icons.rounded.CalendarToday
 import androidx.compose.material.icons.rounded.Surfing
 import androidx.compose.material.icons.rounded.Work
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavHostController
+import com.example.appviagens.ScreenManager
 import com.example.appviagens.component.CustomTopAppBar
+import com.example.appviagens.model.Viagem
 import com.example.appviagens.ui.theme.Gainsoro
+import com.example.appviagens.viewModel.PessoaViewModel
+import com.example.appviagens.viewModel.PessoaViewModelFactory
+import com.example.appviagens.viewModel.ViagemViewModel
+import com.example.appviagens.viewModel.ViagemViewModelFactory
 import java.util.*
 
 
 @Composable
 fun FormViagem(navController: NavHostController, id: Int?) {
+
+    val ctx = LocalContext.current
+    val app = ctx.applicationContext as Application
+    var model:
+            ViagemViewModel = viewModel(
+        factory = ViagemViewModelFactory(app)
+    )
+    if (id != null && id > 0) {
+        model.id = id
+        model.findById(id)
+    }
     Scaffold(
         topBar = {
             CustomTopAppBar(navController, "Nova Viagem", true)
@@ -44,13 +64,18 @@ fun FormViagem(navController: NavHostController, id: Int?) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val model: Viagem = viewModel()
             Spacer(modifier = Modifier.padding(6.dp))
-            Text(
-                text = "Nova Viagem",
-                style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive)
-            )
-            Text(text = "Profile Form ${id}")
+            if (id != null && id > 0) {
+                Text(
+                    text = "Editar Viagem",
+                    style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive)
+                )
+            } else {
+                Text(
+                    text = "Nova Viagem",
+                    style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive)
+                )
+            }
             Spacer(modifier = Modifier.padding(20.dp))
             OutlinedTextField(
                 label = { Text(text = "Destino") },
@@ -85,6 +110,10 @@ fun FormViagem(navController: NavHostController, id: Int?) {
                     cor2 = Color.DarkGray
                     cor1 = Color.Unspecified
                 }
+                if (id != null && id > 0 && selectedOption == 0) {
+                    selectedOption = model.tipoID
+                }
+                model.tipoID = selectedOption
                 Button(
                     onClick = { selectedOption = 1 },
                     colors = ButtonDefaults.buttonColors(backgroundColor = cor1),
@@ -128,16 +157,20 @@ fun FormViagem(navController: NavHostController, id: Int?) {
             }
 
             Spacer(modifier = Modifier.padding(10.dp))
-            DatePickerDemo(model, "Data de partida")
+            model.dataPartida = DatePickerDemo("Data de partida", model.dataPartida)
             Spacer(modifier = Modifier.padding(15.dp))
-            DatePickerDemo(model, "Data de chegada")
-            Spacer(modifier = Modifier.padding(15.dp))
-            var orcamentoString by remember { mutableStateOf("") }
+            model.dataChegada = DatePickerDemo("Data de chegada", model.dataChegada)
             OutlinedTextField(
                 label = { Text(text = "Orçamento") },
                 singleLine = true,
-                value = orcamentoString,
-                onValueChange = { orcamentoString = it },
+                value = model.orcamento?.toString(),
+                onValueChange = {
+                    try {
+                        model.orcamento = it.toDouble()
+                    } catch (e: Exception) {
+                        Log.e("app", "Erro conversão de idade")
+                    }
+                },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 leadingIcon = {
                     Icon(
@@ -149,23 +182,49 @@ fun FormViagem(navController: NavHostController, id: Int?) {
                     )
                 }
             )
-//            model.orcamento = orcamentoString.toDouble() TEM QUE CONVERTER DEPOIS....
+            //// para testes: ////
+            model.usuarioID = 1
             Spacer(modifier = Modifier.padding(20.dp))
+            val context = LocalContext.current
             Button(
-                onClick = { navController.navigateUp() },
+                onClick = {
+                    if (id != null && id > 0) {
+                        Toast
+                            .makeText(
+                                context,
+                                "Viagem editada com sucesso!",
+                                Toast.LENGTH_SHORT
+                            )
+                            .show()
+                    } else {
+                        Toast
+                            .makeText(
+                                context,
+                                "Viagem cadastrada com sucesso!",
+                                Toast.LENGTH_SHORT
+                            )
+                            .show()
+                    }
+                    model.salvar()
+                    navController.navigate(ScreenManager.Viagens.route)
+                },
                 shape = RoundedCornerShape(50.dp),
                 modifier = Modifier
                     .width(350.dp)
                     .height(50.dp)
             ) {
-                Text(text = "Adicionar")
+                if (id != null && id > 0) {
+                    Text(text = "Editar viagem")
+                } else {
+                    Text(text = "Adicionar")
+                }
             }
         }
     }
 }
 
 @Composable
-fun DatePickerDemo(model: Viagem, label: String) {
+fun DatePickerDemo(label: String, mDateModel: String): String {
     val mContext = LocalContext.current
     val mYear: Int
     val mMonth: Int
@@ -175,12 +234,18 @@ fun DatePickerDemo(model: Viagem, label: String) {
     mMonth = mCalendar.get(Calendar.MONTH)
     mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
     mCalendar.time = Date()
-    val mDate = remember { mutableStateOf("") }
+    var mDate = remember { mutableStateOf("") }
+    var newDate = remember { mutableStateOf("") }
+    if (!mDateModel.equals("")) {
+        mDate.value = mDateModel
+    }
     val mDatePickerDialog = DatePickerDialog(
         mContext,
         { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
             mDate.value = "$mDayOfMonth/${mMonth + 1}/$mYear"
-        }, mYear, mMonth, mDay
+            newDate.value = "$mDayOfMonth/${mMonth + 1}/$mYear"
+        },
+        mYear, mMonth, mDay,
     )
     Box(Modifier.clickable(
         onClick = {
@@ -190,11 +255,7 @@ fun DatePickerDemo(model: Viagem, label: String) {
         OutlinedTextField(
             value = mDate.value,
             onValueChange = {
-                if (label.equals("Data de partida")) {
-                    model.dataPartida
-                } else {
-                    model.dataChegada
-                }
+                mDate.value = it
             },
             singleLine = true,
             enabled = false,
@@ -214,6 +275,10 @@ fun DatePickerDemo(model: Viagem, label: String) {
             }
         )
     }
+    if (!mDateModel.equals(newDate.value) && !newDate.value.equals("")) {
+        mDate = newDate
+    }
+    return mDate.value
 }
 
 

@@ -1,27 +1,42 @@
 package com.example.appviagens.model
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
+import androidx.room.*
 
-// tentei usar o construtor pra gerar a lista mas não deu...
-// id: Int, destino: String, dataPartida: String, dataChegada: String, orcamento: Double, tipoID: Int, usuarioID: Int
-class Viagem() : ViewModel() {
-
-    var id by mutableStateOf(0)
-
-    var destino by mutableStateOf("")
-
-    var tipoID by mutableStateOf("") // lazer = 1 | negocios = 2
-
-    var dataChegada by mutableStateOf("")
-
-    var dataPartida by mutableStateOf("")
-
-    var orcamento by mutableStateOf(0.00)
-
-    var usuarioID by mutableStateOf("")
-
+@Entity(
+    foreignKeys = [
+        ForeignKey(
+            entity = Pessoa::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("usuarioID"),
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = TipoViagem::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("tipoID"),
+            //onDelete = ForeignKey.CASCADE
+        )]
+)
+data class Viagem(
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0,
+    val destino: String,
+    val dataPartida: String,
+    val dataChegada: String,
+    val orcamento: Double,
+    val tipoID: Int,
+    val usuarioID: Int
+) {
+//    @PrimaryKey(autoGenerate = true)
+//    var id: Int = 0
 
 }
+
+//data class PessoaViagem(
+//    @Embedded val pessoa: Pessoa,
+//    @Relation(
+//        parentColumn = "id",
+//        entityColumn = "usuarioID"
+//    )
+//    val viagens: List<Viagem>
+//)

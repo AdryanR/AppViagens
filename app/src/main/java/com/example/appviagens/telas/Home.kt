@@ -1,32 +1,48 @@
 package com.example.appviagens.telas
 
+import android.app.Application
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.FlightTakeoff
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.appviagens.ScreenManager
 import com.example.appviagens.component.AppBarTelas
+import com.example.appviagens.viewModel.TipoViagemModelFactory
+import com.example.appviagens.viewModel.TipoViagemViewModel
 
 @Composable
 fun HomeCompose() {
     Scaffold(
         topBar = { AppBarTelas("Bem vindo", Icons.Rounded.FlightTakeoff) }
     ) {
-        Text(
-            text = "Home",
-            fontSize = 30.sp,
-            color = Color.Black
-        )
+        Column(
+            modifier = Modifier.padding(10.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.padding(6.dp))
+            Text(
+                text = "Olá...",
+                style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive)
+            )
+            Spacer(modifier = Modifier.padding(7.dp))
+        }
     }
 }
 
