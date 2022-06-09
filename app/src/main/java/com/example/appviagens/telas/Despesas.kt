@@ -10,8 +10,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.icons.rounded.*
+import androidx.compose.material.icons.rounded.CreditCard
+import androidx.compose.material.icons.rounded.Paid
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -33,21 +33,30 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.navigation
 import com.example.appviagens.R
-import com.example.appviagens.component.AppBarTelas
+import com.example.appviagens.component.CustomTopAppBar
+import com.example.appviagens.model.Despesa
+import com.example.appviagens.model.DespesaCategoria
 import com.example.appviagens.ui.theme.Gainsoro
-import com.example.appviagens.model.Viagem
+import com.example.appviagens.viewModel.DespesaViewModel
+import com.example.appviagens.viewModel.DespesaViewModelFactory
 import com.example.appviagens.viewModel.ViagemViewModel
 import com.example.appviagens.viewModel.ViagemViewModelFactory
 import java.text.DecimalFormat
 
 @Composable
-fun ViagensCompose(navController: NavHostController) {
+fun DespesasCompose(navController: NavHostController, idViagem: Int, destinoViagem : String) {
+    val ctx = LocalContext.current
+    val app = ctx.applicationContext as Application
+    val model:
+            ViagemViewModel = viewModel(
+        factory = ViagemViewModelFactory(app)
+    )
     Scaffold(
-        topBar = { AppBarTelas("Suas viagens", Icons.Rounded.Flight) },
+        topBar = { CustomTopAppBar(navController, "Despesas", true) },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate("form/0") }) {
-                Icon(Icons.Filled.Add, contentDescription = "Nova Viagem")
+                Icon(Icons.Filled.Add, contentDescription = "Nova despesa")
             }
         },
         isFloatingActionButtonDocked = true,
@@ -59,71 +68,52 @@ fun ViagensCompose(navController: NavHostController) {
         ) {
             Spacer(modifier = Modifier.padding(6.dp))
             Text(
-                text = "Hora de viajar?",
-                style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive)
+                text = "Despesas da viagem de $destinoViagem",
+                style = TextStyle(fontSize = 30.sp, fontFamily = FontFamily.Cursive)
             )
             Spacer(modifier = Modifier.padding(7.dp))
-            ListaViagens(navController = navController)
+            ListaDespesas(navController = navController, idViagem)
         }
 
     }
 }
 
-fun NavGraphBuilder.formViagemGrap(navController: NavHostController) {
-    navigation(startDestination = "principal", route = "viagens") {
+fun NavGraphBuilder.formDespesaGrap(navController: NavHostController) {
+    navigation(startDestination = "principal", route = "despesas") {
         composable("principal") { ViagensCompose(navController) }
-        composable("form/{viagemID}",
+        composable("form/{despesaID}",
             arguments = listOf(
-                navArgument("viagemID") {
+                navArgument("despesaID") {
                     type = NavType.IntType
                 }
             )
         ) {
-            val id = it.arguments?.getInt("viagemID")
-            FormViagemCompose(navController, id)
-        }
-        composable("despesas/{viagemID}/{destinoViagem}",
-            arguments = listOf(
-                navArgument("viagemID") {
-                    type = NavType.IntType
-                },
-                navArgument("destinoViagem") {
-                    type = NavType.StringType
-                }
-            )
-        ) {
-            val id = it.arguments?.getInt("viagemID")
-            val destino = it.arguments?.getString("destinoViagem")
-            if (id != null) {
-                if (destino != null) {
-                    DespesasCompose(navController, id, destino)
-                }
-            }
+            val id = it.arguments?.getInt("despesaID")
+            //FormViagemCompose(navController, id)
         }
     }
 }
 
 @Composable
-fun ListaViagens(navController: NavHostController) {
+fun ListaDespesas(navController: NavHostController, idViagem: Int) {
     val ctx = LocalContext.current
     val app = ctx.applicationContext as Application
     val model:
-            ViagemViewModel = viewModel(
-        factory = ViagemViewModelFactory(app)
+            DespesaViewModel = viewModel(
+        factory = DespesaViewModelFactory(app)
     )
-    //                            AQUI PASSA O ID DO USER LOGADO...
-    val viagens by model.allViagensByUser(1).observeAsState(listOf())
+    val despesas by model.allDespesasByViagem(idViagem).observeAsState(listOf())
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-        items(items = viagens) { v ->
-            ViagensView(navController = navController, v, model)
+        items(items = despesas) { d ->
+            DespesasView(navController = navController, d, model)
         }
     }
 }
 
 @Composable
-fun ViagensView(navController: NavHostController, viagem: Viagem, model: ViagemViewModel) {
+fun DespesasView(navController: NavHostController, index: DespesaCategoria, model: DespesaViewModel) {
     val df = DecimalFormat("0.00")
     val context = LocalContext.current
 
@@ -136,7 +126,7 @@ fun ViagensView(navController: NavHostController, viagem: Viagem, model: ViagemV
             onDismissRequest = { openDialog.value = false },
             text = {
                 Text(
-                    "Qual ação deseja?",
+                    "Deseja excluir essa viagem e seus dados?",
                     style = MaterialTheme.typography.h6,
                     color = Color.White,
                     fontWeight = FontWeight.Bold
@@ -145,7 +135,7 @@ fun ViagensView(navController: NavHostController, viagem: Viagem, model: ViagemV
             confirmButton = {
                 TextButton(
                     onClick = {
-                        model.deleteByID(viagem.id)
+                        //model.deleteByID(viagem.id)
                         Toast
                             .makeText(
                                 context,
@@ -157,7 +147,7 @@ fun ViagensView(navController: NavHostController, viagem: Viagem, model: ViagemV
                     }
                 ) {
                     Text(
-                        "Excluir viagem!", fontSize = 18.sp,
+                        "Excluir!", fontSize = 18.sp,
                         color = Color.White
                     )
                 }
@@ -169,16 +159,7 @@ fun ViagensView(navController: NavHostController, viagem: Viagem, model: ViagemV
                         aExcluir = false
                     }
                 ) {
-                    Text("Nada", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                }
-                TextButton(
-                    onClick = {
-                        openDialog.value = false
-                        aExcluir = false
-                        navController.navigate("form/" + viagem.id)
-                    }
-                ) {
-                    Text("Editar viagem", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                    Text("Não", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 }
             },
             backgroundColor = colorResource(id = R.color.status_bar),
@@ -194,7 +175,7 @@ fun ViagensView(navController: NavHostController, viagem: Viagem, model: ViagemV
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = {
-                        navController.navigate("despesas/" + viagem.id + "/" + viagem.destino)
+                        //navController.navigate("despesas/" + despesa.id)
                     },
                     onLongPress = {
                         aExcluir = true;
@@ -206,63 +187,50 @@ fun ViagensView(navController: NavHostController, viagem: Viagem, model: ViagemV
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Spacer(modifier = Modifier.padding(5.dp))
-
-            if (viagem.tipoID == 1) {
-                Icon(
-                    imageVector = Icons.Rounded.Surfing,
-                    contentDescription = null,
-                    tint = Gainsoro,
-                    modifier = Modifier
-                        .size(60.dp)
-                        .padding(vertical = 5.dp)
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Rounded.Work,
-                    contentDescription = null,
-                    tint = Gainsoro,
-                    modifier = Modifier
-                        .size(60.dp)
-                        .padding(vertical = 5.dp)
-                )
-            }
+            Icon(
+                imageVector = Icons.Rounded.Paid,
+                contentDescription = null,
+                tint = Gainsoro,
+                modifier = Modifier
+                    .size(60.dp)
+                    .padding(vertical = 5.dp)
+            )
             Column(
                 modifier = Modifier
                     .padding(8.dp)
                     .weight(1f)
             ) {
                 Text(
-                    text = viagem.destino,
+                    text = index.categoria.nome,
                     style = MaterialTheme.typography.h5,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.padding(3.dp))
                 Text(
-                    text = viagem.dataPartida + " – " + viagem.dataChegada,
+                    text = "Local: " + index.despesas.local,
                     style = MaterialTheme.typography.caption
                 )
                 Spacer(modifier = Modifier.padding(3.dp))
                 Text(
-                    text = "R$ ${df.format(viagem.orcamento) + " – " + "R$ 000,00"}",
+                    text = "Data: " + index.despesas.data,
                     style = MaterialTheme.typography.caption
-//                    modifier = Modifier
-//                        .align(Alignment.CenterVertically)
-//                        .padding(16.dp)
-
+                )
+                Spacer(modifier = Modifier.padding(3.dp))
+                Text(
+                    text = "Descrição: " + index.despesas.descricao,
+                    style = MaterialTheme.typography.caption
                 )
                 Spacer(modifier = Modifier.padding(5.dp))
             }
-//            Icon(
-//                imageVector = Icons.Rounded.FormatListBulleted,
-//                contentDescription = null,
-//                tint = Gainsoro,
-//                modifier = Modifier
-//                    .size(60.dp)
-//                    .align(Alignment.CenterVertically)
-//                   .padding(5.dp)
-//            )
+            Text(
+                text = "R$ ${df.format(index.despesas.valor)}",
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(16.dp)
+
+            )
         }
     }
 
 }
-

@@ -40,7 +40,7 @@ import java.util.*
 
 
 @Composable
-fun FormViagem(navController: NavHostController, id: Int?) {
+fun FormViagemCompose(navController: NavHostController, id: Int?) {
 
     val ctx = LocalContext.current
     val app = ctx.applicationContext as Application

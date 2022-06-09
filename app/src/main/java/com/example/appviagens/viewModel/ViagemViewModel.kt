@@ -52,6 +52,10 @@ class ViagemViewModel(
         }
     }
 
+    fun getDestinoByViagem(idViagem : Int) : String {
+        return repository.getDestinoByViagem(idViagem)
+    }
+
 //    fun insertTipos(){
 //        val tipoviagem = TipoViagem("Lazer")
 //        viewModelScope.launch {

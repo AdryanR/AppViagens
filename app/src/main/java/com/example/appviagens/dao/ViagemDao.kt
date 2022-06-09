@@ -22,6 +22,9 @@ interface ViagemDao {
     @Query("Delete from Viagem where Viagem.id = :id")
     suspend fun deleteByID(id : Int)
 
+    @Query("select destino from Viagem where Viagem.id = :id")
+    fun getDestinoByViagem(id : Int) : String
+
 //    @Insert
 //    suspend fun insertTipos(tipoviagem: TipoViagem)
 //    @Delete

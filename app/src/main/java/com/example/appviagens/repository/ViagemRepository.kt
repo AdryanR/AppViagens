@@ -39,6 +39,10 @@ class ViagemRepository(app: Application) {
         viagemDao.deleteByID(id)
     }
 
+    fun getDestinoByViagem(idViagem : Int) : String {
+        return viagemDao.getDestinoByViagem(idViagem)
+    }
+
 //    suspend fun insertTipos(tipoviagem: TipoViagem) {
 //        viagemDao.insertTipos(tipoviagem)
 //    }
