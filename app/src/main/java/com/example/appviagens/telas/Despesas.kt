@@ -44,18 +44,12 @@ import com.example.appviagens.viewModel.ViagemViewModelFactory
 import java.text.DecimalFormat
 
 @Composable
-fun DespesasCompose(navController: NavHostController, idViagem: Int, destinoViagem : String) {
-    val ctx = LocalContext.current
-    val app = ctx.applicationContext as Application
-    val model:
-            ViagemViewModel = viewModel(
-        factory = ViagemViewModelFactory(app)
-    )
+fun DespesasCompose(navController: NavHostController, idViagem: Int, destinoViagem: String) {
     Scaffold(
         topBar = { CustomTopAppBar(navController, "Despesas", true) },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.navigate("form/0") }) {
+                onClick = { navController.navigate("formDespesa/$idViagem") }) {
                 Icon(Icons.Filled.Add, contentDescription = "Nova despesa")
             }
         },
@@ -81,7 +75,7 @@ fun DespesasCompose(navController: NavHostController, idViagem: Int, destinoViag
 fun NavGraphBuilder.formDespesaGrap(navController: NavHostController) {
     navigation(startDestination = "principal", route = "despesas") {
         composable("principal") { ViagensCompose(navController) }
-        composable("form/{despesaID}",
+        composable("formDespesa/{despesaID}",
             arguments = listOf(
                 navArgument("despesaID") {
                     type = NavType.IntType
@@ -89,7 +83,7 @@ fun NavGraphBuilder.formDespesaGrap(navController: NavHostController) {
             )
         ) {
             val id = it.arguments?.getInt("despesaID")
-            //FormViagemCompose(navController, id)
+            FormDespesaCompose(navController, id, 0)
         }
     }
 }
@@ -113,7 +107,11 @@ fun ListaDespesas(navController: NavHostController, idViagem: Int) {
 }
 
 @Composable
-fun DespesasView(navController: NavHostController, index: DespesaCategoria, model: DespesaViewModel) {
+fun DespesasView(
+    navController: NavHostController,
+    index: DespesaCategoria,
+    model: DespesaViewModel
+) {
     val df = DecimalFormat("0.00")
     val context = LocalContext.current
 
@@ -126,7 +124,7 @@ fun DespesasView(navController: NavHostController, index: DespesaCategoria, mode
             onDismissRequest = { openDialog.value = false },
             text = {
                 Text(
-                    "Deseja excluir essa viagem e seus dados?",
+                    "Deseja excluir essa despesa?",
                     style = MaterialTheme.typography.h6,
                     color = Color.White,
                     fontWeight = FontWeight.Bold
@@ -135,11 +133,11 @@ fun DespesasView(navController: NavHostController, index: DespesaCategoria, mode
             confirmButton = {
                 TextButton(
                     onClick = {
-                        //model.deleteByID(viagem.id)
+                        model.deleteByID(index.despesas.id)
                         Toast
                             .makeText(
                                 context,
-                                "Viagem apagada!",
+                                "Despesa apagada!",
                                 Toast.LENGTH_SHORT
                             )
                             .show()

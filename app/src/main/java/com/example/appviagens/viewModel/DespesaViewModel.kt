@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appviagens.model.Despesa
 import com.example.appviagens.model.DespesaCategoria
+import com.example.appviagens.model.Viagem
 import com.example.appviagens.repository.DespesaRepository
 import kotlinx.coroutines.launch
 
@@ -35,4 +36,21 @@ class DespesaViewModel(
         return repository.allDespesasByViagem(viagemID)
     }
 
+    fun findById(id: Int) {
+        viewModelScope.launch {
+            val d = repository.findById(id)
+            descricao = d.descricao
+            valor = d.valor
+            local = d.local
+            data = d.data
+            categoriaID = d.categoriaID
+            viagemID = d.viagemID
+        }
+    }
+
+    fun deleteByID(id: Int) {
+        viewModelScope.launch {
+            repository.deleteByID(id)
+        }
+    }
 }

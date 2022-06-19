@@ -29,5 +29,13 @@ class DespesaRepository(app: Application) {
         return despesaDao.allDespesasByViagem(viagemID)
     }
 
+    suspend fun findById(id: Int) : Despesa {
+        return despesaDao.findById(id)
+    }
+
+    suspend fun deleteByID(id : Int) {
+        despesaDao.deleteByID(id)
+    }
+
 
 }

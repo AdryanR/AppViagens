@@ -15,6 +15,7 @@ sealed class ScreenManager(
     object EsqueciSenha : ScreenManager("EsqueciSenha", R.string.EsqueciSenha, Icons.Filled.Email)
     object Home : ScreenManager("home", R.string.home, Icons.Filled.Home)
     object Viagens : ScreenManager("viagens", R.string.viagens, Icons.Filled.Flight)
+    object Despesas : ScreenManager("despesas", R.string.despesas, Icons.Filled.Flight)
     object FormViagem : ScreenManager("FormViagem", R.string.formViagem, Icons.Filled.Flight)
     object Sobre : ScreenManager("sobre", R.string.sobre, Icons.Filled.Person)
 

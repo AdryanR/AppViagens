@@ -97,6 +97,7 @@ fun HomeNavigation() {
             composable(ScreenManager.Viagens.route) { ViagensCompose(navController = navController) }
             composable(ScreenManager.Sobre.route) { SobreCompose() }
             formViagemGrap(navController)
+            formDespesaGrap(navController)
         }
     }
 }

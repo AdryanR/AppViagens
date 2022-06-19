@@ -1,9 +1,6 @@
 package com.example.appviagens.component
 
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -20,7 +17,7 @@ fun PasswordField(value: String,
     var passwordVisibility by remember{
         mutableStateOf(false)
     }
-    OutlinedTextField(
+    TextField(
         value = value,
         onValueChange = { s -> onChange(s) },
         label = {

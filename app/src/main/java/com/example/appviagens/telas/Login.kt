@@ -106,7 +106,7 @@ fun LoginCompose(
         Text(text = "Login", style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive))
 
         Spacer(modifier = Modifier.height(20.dp))
-        OutlinedTextField(
+        TextField(
             label = { Text(text = "Login") },
             value = model.login,
             onValueChange = { model.login = it })

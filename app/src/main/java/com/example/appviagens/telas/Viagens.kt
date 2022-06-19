@@ -1,6 +1,7 @@
 package com.example.appviagens.telas
 
 import android.app.Application
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -117,13 +118,21 @@ fun ListaViagens(navController: NavHostController) {
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         items(items = viagens) { v ->
-            ViagensView(navController = navController, v, model)
+            val custoViagem by model.somaDespesasByViagem(v.id).observeAsState(initial = 0.00)
+            if (custoViagem > 0) {
+                ViagensView(navController = navController, v, model, custoViagem)
+            }
         }
     }
 }
 
 @Composable
-fun ViagensView(navController: NavHostController, viagem: Viagem, model: ViagemViewModel) {
+fun ViagensView(
+    navController: NavHostController,
+    viagem: Viagem,
+    model: ViagemViewModel,
+    custoV: Double
+) {
     val df = DecimalFormat("0.00")
     val context = LocalContext.current
 
@@ -169,7 +178,12 @@ fun ViagensView(navController: NavHostController, viagem: Viagem, model: ViagemV
                         aExcluir = false
                     }
                 ) {
-                    Text("Nada", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        "Nada",
+                        color = Color.White,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
                 TextButton(
                     onClick = {
@@ -178,7 +192,12 @@ fun ViagensView(navController: NavHostController, viagem: Viagem, model: ViagemV
                         navController.navigate("form/" + viagem.id)
                     }
                 ) {
-                    Text("Editar viagem", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        "Editar viagem",
+                        color = Color.White,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             },
             backgroundColor = colorResource(id = R.color.status_bar),
@@ -243,7 +262,7 @@ fun ViagensView(navController: NavHostController, viagem: Viagem, model: ViagemV
                 )
                 Spacer(modifier = Modifier.padding(3.dp))
                 Text(
-                    text = "R$ ${df.format(viagem.orcamento) + " – " + "R$ 000,00"}",
+                    text = "R$ ${df.format(viagem.orcamento)}" + " — " + "R$ ${df.format(custoV)}",
                     style = MaterialTheme.typography.caption
 //                    modifier = Modifier
 //                        .align(Alignment.CenterVertically)

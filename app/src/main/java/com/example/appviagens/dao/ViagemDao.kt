@@ -14,27 +14,20 @@ interface ViagemDao {
     suspend fun update(viagem: Viagem)
 
     @Query("Select * from Viagem v where v.usuarioID = :userID")
-    fun getViagensByUser(userID : Int): LiveData<List<Viagem>>
+    fun getViagensByUser(userID: Int): LiveData<List<Viagem>>
 
     @Query("Select * from Viagem v where v.id = :id")
-    suspend fun findById(id : Int): Viagem
+    suspend fun findById(id: Int): Viagem
 
     @Query("Delete from Viagem where Viagem.id = :id")
-    suspend fun deleteByID(id : Int)
+    suspend fun deleteByID(id: Int)
 
     @Query("select destino from Viagem where Viagem.id = :id")
-    fun getDestinoByViagem(id : Int) : String
+    fun getDestinoByViagem(id: Int): String
 
-//    @Insert
-//    suspend fun insertTipos(tipoviagem: TipoViagem)
-//    @Delete
-//    suspend fun delete(pessoa: Pessoa)
-//
-//    @Query("select * from Viagem order by dataPartida")
-//    fun findAll(): List<Viagem>
-//
-//    @Query("select * from Pessoa c where c.id = :id")
-//    suspend fun findById(id: Int): Pessoa?
+    @Query("SELECT SUM(valor) FROM Despesa as d inner join viagem v on d.viagemID = v.id where v.id = :id")
+    fun somaDespesasByViagem(id: Int):  LiveData<Double>
+
 //
 //    @Query("select id from Pessoa c where c.login = :login and c.senha = :senha")
 //    fun login(login: String, senha: String): Int?

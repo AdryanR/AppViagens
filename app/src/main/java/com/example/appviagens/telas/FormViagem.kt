@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Flight
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -20,9 +19,7 @@ import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.rounded.CalendarToday
-import androidx.compose.material.icons.rounded.Surfing
-import androidx.compose.material.icons.rounded.Work
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
@@ -30,6 +27,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavHostController
 import com.example.appviagens.ScreenManager
 import com.example.appviagens.component.CustomTopAppBar
+import com.example.appviagens.component.DatePickerDemo
 import com.example.appviagens.model.Viagem
 import com.example.appviagens.ui.theme.Gainsoro
 import com.example.appviagens.viewModel.PessoaViewModel
@@ -54,7 +52,11 @@ fun FormViagemCompose(navController: NavHostController, id: Int?) {
     }
     Scaffold(
         topBar = {
-            CustomTopAppBar(navController, "Nova Viagem", true)
+            if (id != null && id > 0) {
+                CustomTopAppBar(navController, "Editar viagem", true)
+            } else {
+                CustomTopAppBar(navController, "Nova viagem", true)
+            }
         }
 
     ) {
@@ -77,7 +79,7 @@ fun FormViagemCompose(navController: NavHostController, id: Int?) {
                 )
             }
             Spacer(modifier = Modifier.padding(20.dp))
-            OutlinedTextField(
+            TextField(
                 label = { Text(text = "Destino") },
                 singleLine = true,
                 value = model.destino,
@@ -133,7 +135,6 @@ fun FormViagemCompose(navController: NavHostController, id: Int?) {
                     Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                     Text("Lazer", color = Color.DarkGray)
                 }
-
                 Button(
                     onClick = { selectedOption = 2 },
                     colors = ButtonDefaults.buttonColors(backgroundColor = cor2),
@@ -144,7 +145,6 @@ fun FormViagemCompose(navController: NavHostController, id: Int?) {
                         bottom = 12.dp
                     )
                 ) {
-                    // Inner content including an icon and a text label
                     Icon(
                         Icons.Rounded.Work,
                         tint = Gainsoro,
@@ -155,12 +155,12 @@ fun FormViagemCompose(navController: NavHostController, id: Int?) {
                     Text("Negócios", color = Color.DarkGray)
                 }
             }
-
             Spacer(modifier = Modifier.padding(10.dp))
             model.dataPartida = DatePickerDemo("Data de partida", model.dataPartida)
             Spacer(modifier = Modifier.padding(15.dp))
             model.dataChegada = DatePickerDemo("Data de chegada", model.dataChegada)
-            OutlinedTextField(
+            Spacer(modifier = Modifier.padding(10.dp))
+            TextField(
                 label = { Text(text = "Orçamento") },
                 singleLine = true,
                 value = model.orcamento?.toString(),
@@ -168,14 +168,14 @@ fun FormViagemCompose(navController: NavHostController, id: Int?) {
                     try {
                         model.orcamento = it.toDouble()
                     } catch (e: Exception) {
-                        Log.e("app", "Erro conversão de idade")
+                        Log.e("app", "Erro conversão de valor")
                     }
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 leadingIcon = {
                     Icon(
                         tint = Gainsoro,
-                        imageVector = Icons.Rounded.Flight,
+                        imageVector = Icons.Rounded.AttachMoney,
                         contentDescription = null,
                         modifier = Modifier
                             .padding(16.dp)
@@ -223,62 +223,6 @@ fun FormViagemCompose(navController: NavHostController, id: Int?) {
     }
 }
 
-@Composable
-fun DatePickerDemo(label: String, mDateModel: String): String {
-    val mContext = LocalContext.current
-    val mYear: Int
-    val mMonth: Int
-    val mDay: Int
-    val mCalendar = Calendar.getInstance()
-    mYear = mCalendar.get(Calendar.YEAR)
-    mMonth = mCalendar.get(Calendar.MONTH)
-    mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
-    mCalendar.time = Date()
-    var mDate = remember { mutableStateOf("") }
-    var newDate = remember { mutableStateOf("") }
-    if (!mDateModel.equals("")) {
-        mDate.value = mDateModel
-    }
-    val mDatePickerDialog = DatePickerDialog(
-        mContext,
-        { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
-            mDate.value = "$mDayOfMonth/${mMonth + 1}/$mYear"
-            newDate.value = "$mDayOfMonth/${mMonth + 1}/$mYear"
-        },
-        mYear, mMonth, mDay,
-    )
-    Box(Modifier.clickable(
-        onClick = {
-            mDatePickerDialog.show()
-        }
-    )) {
-        OutlinedTextField(
-            value = mDate.value,
-            onValueChange = {
-                mDate.value = it
-            },
-            singleLine = true,
-            enabled = false,
-            label = { Text(text = label, color = Color.DarkGray) },
-            modifier = Modifier
-                .clickable {
-                    mDatePickerDialog.show()
-                },
-            leadingIcon = {
-                Icon(
-                    tint = Gainsoro,
-                    imageVector = Icons.Rounded.CalendarToday,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(16.dp)
-                )
-            }
-        )
-    }
-    if (!mDateModel.equals(newDate.value) && !newDate.value.equals("")) {
-        mDate = newDate
-    }
-    return mDate.value
-}
+
 
 

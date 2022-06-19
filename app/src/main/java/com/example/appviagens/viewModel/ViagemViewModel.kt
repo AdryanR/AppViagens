@@ -52,8 +52,8 @@ class ViagemViewModel(
         }
     }
 
-    fun getDestinoByViagem(idViagem : Int) : String {
-        return repository.getDestinoByViagem(idViagem)
+    fun somaDespesasByViagem(idViagem : Int) : LiveData<Double> {
+        return repository.somaDespesasByViagem(idViagem)
     }
 
 //    fun insertTipos(){

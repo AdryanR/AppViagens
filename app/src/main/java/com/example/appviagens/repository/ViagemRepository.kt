@@ -39,8 +39,8 @@ class ViagemRepository(app: Application) {
         viagemDao.deleteByID(id)
     }
 
-    fun getDestinoByViagem(idViagem : Int) : String {
-        return viagemDao.getDestinoByViagem(idViagem)
+    fun somaDespesasByViagem(idViagem : Int) : LiveData<Double> {
+        return viagemDao.somaDespesasByViagem(idViagem)
     }
 
 //    suspend fun insertTipos(tipoviagem: TipoViagem) {

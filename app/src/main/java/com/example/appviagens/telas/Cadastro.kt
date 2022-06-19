@@ -76,12 +76,12 @@ fun CadastroCompose(navController: NavHostController) {
             style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive)
         )
         Spacer(modifier = Modifier.height(20.dp))
-        OutlinedTextField(
+        TextField(
             label = { Text(text = "Nome") },
             value = model.nome,
             onValueChange = { model.nome = it })
         Spacer(modifier = Modifier.height(20.dp))
-        OutlinedTextField(
+        TextField(
             label = { Text(text = "Login") },
             value = model.login,
             onValueChange = { model.login = it })
