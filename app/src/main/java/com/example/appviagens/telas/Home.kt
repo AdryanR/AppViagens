@@ -14,15 +14,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
+import androidx.navigation.compose.*
 import com.example.appviagens.ScreenManager
 import com.example.appviagens.component.AppBarTelas
 
 @Composable
-fun HomeCompose() {
+fun HomeCompose(nameUserLogged: String) {
     Scaffold(
         topBar = { AppBarTelas("Bem vindo", Icons.Rounded.FlightTakeoff) }
     ) {
@@ -33,7 +31,7 @@ fun HomeCompose() {
         ) {
             Spacer(modifier = Modifier.padding(6.dp))
             Text(
-                text = "Olá...",
+                text = "Olá, $nameUserLogged",
                 style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive)
             )
             Spacer(modifier = Modifier.padding(7.dp))
@@ -42,7 +40,7 @@ fun HomeCompose() {
 }
 
 @Composable
-fun HomeNavigation() {
+fun HomeNavigation(nameUserLogged: String, idUserLogged: Int) {
 
     val navController = rememberNavController()
     val items = listOf(
@@ -73,7 +71,6 @@ fun HomeNavigation() {
                         selected = currentRoute == item.route,
                         onClick = {
                             navController.navigate(item.route) {
-
                                 navController.graph.startDestinationRoute?.let { screen_route ->
                                     popUpTo(screen_route) {
                                         saveState = true
@@ -93,11 +90,11 @@ fun HomeNavigation() {
             startDestination = ScreenManager.Home.route,
             Modifier.padding(innerPadding)
         ) {
-            composable(ScreenManager.Home.route) { HomeCompose() }
-            composable(ScreenManager.Viagens.route) { ViagensCompose(navController = navController) }
+            composable(ScreenManager.Home.route) { HomeCompose(nameUserLogged) }
+            composable(ScreenManager.Viagens.route) { ViagensCompose(navController = navController, idUserLogged) }
             composable(ScreenManager.Sobre.route) { SobreCompose() }
-            formViagemGrap(navController)
-            formDespesaGrap(navController)
+            formViagemGrap(navController, idUserLogged)
+            formDespesaGrap(navController, idUserLogged)
         }
     }
 }

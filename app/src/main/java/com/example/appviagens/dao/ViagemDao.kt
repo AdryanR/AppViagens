@@ -25,8 +25,9 @@ interface ViagemDao {
     @Query("select destino from Viagem where Viagem.id = :id")
     fun getDestinoByViagem(id: Int): String
 
-    @Query("SELECT SUM(valor) FROM Despesa as d inner join viagem v on d.viagemID = v.id where v.id = :id")
-    fun somaDespesasByViagem(id: Int):  LiveData<Double>
+    @Query("SELECT CASE WHEN (SELECT COUNT(*) from Despesa where viagemID = :id) > 0 THEN (SELECT SUM(valor) FROM Despesa as d inner join viagem v on d.viagemID = v.id where v.id = :id) ELSE 0.00 END;")
+    fun somaDespesasByViagem(id: Int): LiveData<Double>
+
 
 //
 //    @Query("select id from Pessoa c where c.login = :login and c.senha = :senha")

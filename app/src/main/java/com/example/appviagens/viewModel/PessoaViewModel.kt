@@ -13,25 +13,27 @@ class PessoaViewModel(
     private val repository: PessoaRepository
 ) : ViewModel() {
 
+    var id by mutableStateOf(0)
     var nome by mutableStateOf("")
     var login by mutableStateOf("")
     var senha by mutableStateOf("")
 
     fun salvar() {
-        val pessoa = Pessoa(nome, login, senha)
+        val pessoa = Pessoa(id, nome, login, senha)
         viewModelScope.launch {
             repository.save(pessoa)
         }
     }
 
-//    fun login(login: String, senha: String) {
-//        viewModelScope.launch {
-//            repository.login(login, senha)
-//        }
-//    }
-//
-//      fun login(login: String, senha: String): Int? {
-//        return repository.login(login, senha)
-//    }
+    fun login(onSucess: (Pessoa) -> Unit, onNotFound: () -> Unit) {
+        viewModelScope.launch {
+            val pessoa = repository.login(login, senha)
+            if (pessoa != null && pessoa.id != 0) {
+                onSucess(pessoa)
+            } else {
+                onNotFound()
+            }
+        }
+    }
 
 }

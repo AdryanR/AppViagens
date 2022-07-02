@@ -1,7 +1,10 @@
 package com.example.appviagens.telas
 
 import android.app.Application
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -29,6 +32,8 @@ import com.example.appviagens.ScreenManager
 import com.example.appviagens.component.PasswordField
 import com.example.appviagens.model.Pessoa
 import com.example.appviagens.viewModel.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun EstadoLogin(navController: NavHostController) {
@@ -38,16 +43,17 @@ fun EstadoLogin(navController: NavHostController) {
     var loginUser by remember {
         mutableStateOf("")
     }
+    var userID by remember {
+        mutableStateOf(0)
+    }
     if (isLogged) {
-        //CircularProgressIndicator(modifier = Modifier.size(width = 100.dp, height = 100.dp))
-        navController.navigate(ScreenManager.Home.route)
+        navController.navigate("home/$loginUser/$userID")
     } else {
         LoginCompose(
-            onUserChange = {
-                loginUser = it
-            },
             onSuccess = {
                 isLogged = true
+                userID = it.id
+                loginUser = it.nome
             },
             navController = navController
         )
@@ -56,9 +62,7 @@ fun EstadoLogin(navController: NavHostController) {
 
 @Composable
 fun LoginCompose(
-//    login: String, // PEGAR O NOME, PODE SER O ID DEPOIS...
-    onUserChange: (String) -> Unit,
-    onSuccess: () -> Unit,
+    onSuccess: (Pessoa) -> Unit,
     navController: NavHostController
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -66,7 +70,7 @@ fun LoginCompose(
             text = AnnotatedString("Cadastre-se"),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(20.dp),
+                .padding(25.dp),
             onClick = { navController.navigate(ScreenManager.Cadastro.route) },
             style = TextStyle(
                 fontSize = 16.sp,
@@ -95,17 +99,17 @@ fun LoginCompose(
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(74.dp)
-                .clip(CircleShape) // clip to the circle shape
+                .clip(CircleShape)
                 .border(
                     5.dp,
                     Color.Gray,
                     CircleShape
-                )//optional
+                )
         )
-        Spacer(modifier = Modifier.padding(15.dp))
+        Spacer(modifier = Modifier.padding(13.dp))
         Text(text = "Login", style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive))
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(25.dp))
         TextField(
             label = { Text(text = "Login") },
             value = model.login,
@@ -115,11 +119,33 @@ fun LoginCompose(
         PasswordField(value = model.senha, onChange = { model.senha = it })
 
         Spacer(modifier = Modifier.height(20.dp))
+        val context = LocalContext.current
+        var button by remember { mutableStateOf(false) }
+        var teste by remember { mutableStateOf(false) }
+
+        if (!model.senha.equals("") && !model.login.equals("")) {
+            button = true
+        } else {
+            button = false
+        }
 
         Button(
-            onClick = { //if ( model.login("teste", "teste") !! > 0) { }
-                    onSuccess()
-                 },
+            enabled = button,
+            onClick = {
+                teste = true
+                model.login(
+                    onSucess = { onSuccess(it) },
+                    onNotFound = {
+                        Toast
+                            .makeText(
+                                context,
+                                "Usuário não encontrado, verifique o login.",
+                                Toast.LENGTH_SHORT
+                            )
+                            .show()
+                    },
+                )
+            },
             shape = RoundedCornerShape(50.dp),
             modifier = Modifier
                 .width(350.dp)
@@ -128,7 +154,7 @@ fun LoginCompose(
             Text(text = "Logar")
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(25.dp))
         ClickableText(
             text = AnnotatedString("Esqueceu a senha?"),
             onClick = { navController.navigate(ScreenManager.EsqueciSenha.route) },
@@ -139,3 +165,6 @@ fun LoginCompose(
         )
     }
 }
+
+
+

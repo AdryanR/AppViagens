@@ -23,13 +23,13 @@ class PessoaRepository(app: Application) {
         }
     }
 
-    suspend fun findAll(): List<Pessoa> = pessoaDao.findAll()
+    suspend fun login(login: String, senha: String): Pessoa? = pessoaDao.login(login,senha)
 
-    suspend fun findById(id: Int) = pessoaDao.findById(id)
-
-    suspend fun delete(contato: Pessoa) = pessoaDao.delete(contato)
-
-    suspend fun login(login: String, senha: String): Int? = pessoaDao.login(login,senha)
+//    suspend fun findAll(): List<Pessoa> = pessoaDao.findAll()
+//
+//    suspend fun findById(id: Int) = pessoaDao.findById(id)
+//
+//    suspend fun delete(contato: Pessoa) = pessoaDao.delete(contato)
 
 
 

@@ -1,7 +1,9 @@
 package com.example.appviagens.viewModel
 
 import android.util.Log
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
@@ -52,7 +54,8 @@ class ViagemViewModel(
         }
     }
 
-    fun somaDespesasByViagem(idViagem : Int) : LiveData<Double> {
+    @Composable
+    fun somaDespesasByViagem(idViagem: Int): LiveData<Double> {
         return repository.somaDespesasByViagem(idViagem)
     }
 

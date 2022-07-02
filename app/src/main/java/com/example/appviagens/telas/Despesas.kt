@@ -1,6 +1,7 @@
 package com.example.appviagens.telas
 
 import android.app.Application
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -72,9 +73,9 @@ fun DespesasCompose(navController: NavHostController, idViagem: Int, destinoViag
     }
 }
 
-fun NavGraphBuilder.formDespesaGrap(navController: NavHostController) {
+fun NavGraphBuilder.formDespesaGrap(navController: NavHostController, idUserLogged: Int) {
     navigation(startDestination = "principal", route = "despesas") {
-        composable("principal") { ViagensCompose(navController) }
+        composable("principal") { ViagensCompose(navController, idUserLogged) }
         composable("formDespesa/{despesaID}",
             arguments = listOf(
                 navArgument("despesaID") {
@@ -84,6 +85,20 @@ fun NavGraphBuilder.formDespesaGrap(navController: NavHostController) {
         ) {
             val id = it.arguments?.getInt("despesaID")
             FormDespesaCompose(navController, id, 0)
+        }
+        composable("formDespesaEditar/{viagemID}/{despesaID}",
+            arguments = listOf(
+                navArgument("viagemID") {
+                    type = androidx.navigation.NavType.IntType
+                },
+                navArgument("despesaID") {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            val idViagem = it.arguments?.getInt("viagemID")
+            val idDespesa = it.arguments?.getInt("despesaID")
+            FormDespesaCompose(navController, idViagem, idDespesa)
         }
     }
 }
@@ -173,7 +188,7 @@ fun DespesasView(
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = {
-                        //navController.navigate("despesas/" + despesa.id)
+                        navController.navigate("formDespesaEditar/" + index.despesas.viagemID + "/" + index.despesas.id)
                     },
                     onLongPress = {
                         aExcluir = true;

@@ -38,7 +38,7 @@ import java.util.*
 
 
 @Composable
-fun FormViagemCompose(navController: NavHostController, id: Int?) {
+fun FormViagemCompose(navController: NavHostController, id: Int?, idUserLogged: Int) {
 
     val ctx = LocalContext.current
     val app = ctx.applicationContext as Application
@@ -182,8 +182,8 @@ fun FormViagemCompose(navController: NavHostController, id: Int?) {
                     )
                 }
             )
-            //// para testes: ////
-            model.usuarioID = 1
+            //// id do usuário logado (FK): ////
+            model.usuarioID = idUserLogged
             Spacer(modifier = Modifier.padding(20.dp))
             val context = LocalContext.current
             Button(

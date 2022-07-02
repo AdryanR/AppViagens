@@ -37,17 +37,19 @@ import com.example.appviagens.R
 import com.example.appviagens.component.AppBarTelas
 import com.example.appviagens.ui.theme.Gainsoro
 import com.example.appviagens.model.Viagem
+import com.example.appviagens.viewModel.PessoaViewModel
+import com.example.appviagens.viewModel.PessoaViewModelFactory
 import com.example.appviagens.viewModel.ViagemViewModel
 import com.example.appviagens.viewModel.ViagemViewModelFactory
 import java.text.DecimalFormat
 
 @Composable
-fun ViagensCompose(navController: NavHostController) {
+fun ViagensCompose(navController: NavHostController, idUserLogged: Int) {
     Scaffold(
         topBar = { AppBarTelas("Suas viagens", Icons.Rounded.Flight) },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.navigate("form/0") }) {
+                onClick = { navController.navigate("form/0/$idUserLogged") }) {
                 Icon(Icons.Filled.Add, contentDescription = "Nova Viagem")
             }
         },
@@ -64,24 +66,30 @@ fun ViagensCompose(navController: NavHostController) {
                 style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive)
             )
             Spacer(modifier = Modifier.padding(7.dp))
-            ListaViagens(navController = navController)
+            ListaViagens(navController = navController, idUserLogged)
         }
 
     }
 }
 
-fun NavGraphBuilder.formViagemGrap(navController: NavHostController) {
+fun NavGraphBuilder.formViagemGrap(navController: NavHostController, idUserLogged: Int) {
     navigation(startDestination = "principal", route = "viagens") {
-        composable("principal") { ViagensCompose(navController) }
-        composable("form/{viagemID}",
+        composable("principal") { ViagensCompose(navController, idUserLogged) }
+        composable("form/{viagemID}/{UserID}",
             arguments = listOf(
                 navArgument("viagemID") {
+                    type = NavType.IntType
+                },
+                navArgument("UserID") {
                     type = NavType.IntType
                 }
             )
         ) {
             val id = it.arguments?.getInt("viagemID")
-            FormViagemCompose(navController, id)
+            val idUser = it.arguments?.getInt("UserID")
+            if (idUser != null) {
+                FormViagemCompose(navController, id, idUser)
+            }
         }
         composable("despesas/{viagemID}/{destinoViagem}",
             arguments = listOf(
@@ -105,15 +113,16 @@ fun NavGraphBuilder.formViagemGrap(navController: NavHostController) {
 }
 
 @Composable
-fun ListaViagens(navController: NavHostController) {
+fun ListaViagens(navController: NavHostController, idUserLogged: Int) {
     val ctx = LocalContext.current
     val app = ctx.applicationContext as Application
     val model:
             ViagemViewModel = viewModel(
         factory = ViagemViewModelFactory(app)
     )
-    //                            AQUI PASSA O ID DO USER LOGADO...
-    val viagens by model.allViagensByUser(1).observeAsState(listOf())
+
+    // passando ID do user logado
+    val viagens by model.allViagensByUser(idUserLogged).observeAsState(listOf())
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
@@ -121,6 +130,8 @@ fun ListaViagens(navController: NavHostController) {
             val custoViagem by model.somaDespesasByViagem(v.id).observeAsState(initial = 0.00)
             if (custoViagem > 0) {
                 ViagensView(navController = navController, v, model, custoViagem)
+            } else {
+                ViagensView(navController = navController, v, model, 0.00)
             }
         }
     }
@@ -257,18 +268,40 @@ fun ViagensView(
                 )
                 Spacer(modifier = Modifier.padding(3.dp))
                 Text(
-                    text = viagem.dataPartida + " – " + viagem.dataChegada,
-                    style = MaterialTheme.typography.caption
+                    text = viagem.dataPartida + " — " + viagem.dataChegada,
+                    fontSize = 14.sp
+                    //style = MaterialTheme.typography.caption
                 )
                 Spacer(modifier = Modifier.padding(3.dp))
-                Text(
-                    text = "R$ ${df.format(viagem.orcamento)}" + " — " + "R$ ${df.format(custoV)}",
-                    style = MaterialTheme.typography.caption
+                if (custoV > 0) {
+                    var cor by remember {
+                        mutableStateOf(Color.White)
+                    }
+                    if (custoV > viagem.orcamento) {
+                        cor = Color.Red
+                    }
+                    Text(
+                        text = "R$ ${df.format(viagem.orcamento)}" + " — " + "R$ ${df.format(custoV)}",
+                        fontSize = 14.sp,
+                        color = cor
+                        //style = MaterialTheme.typography.caption
 //                    modifier = Modifier
 //                        .align(Alignment.CenterVertically)
 //                        .padding(16.dp)
 
-                )
+                    )
+                } else {
+                    Text(
+                        text = "R$ ${df.format(viagem.orcamento)}" + " — " + "R$ 00,00",
+                        fontSize = 14.sp,
+                        color = Color.White
+                        //style = MaterialTheme.typography.caption
+//                    modifier = Modifier
+//                        .align(Alignment.CenterVertically)
+//                        .padding(16.dp)
+
+                    )
+                }
                 Spacer(modifier = Modifier.padding(5.dp))
             }
 //            Icon(

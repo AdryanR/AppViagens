@@ -21,25 +21,24 @@ class ViagemRepository(app: Application) {
     suspend fun save(viagem: Viagem) {
         if (viagem.id == 0) {
             viagemDao.insert(viagem)
-        }
-        else {
+        } else {
             viagemDao.update(viagem)
         }
     }
 
-    fun allViagensByUser(userID : Int) : LiveData<List<Viagem>> {
+    fun allViagensByUser(userID: Int): LiveData<List<Viagem>> {
         return viagemDao.getViagensByUser(userID)
     }
 
-    suspend fun findById(id : Int) : Viagem {
+    suspend fun findById(id: Int): Viagem {
         return viagemDao.findById(id)
     }
 
-    suspend fun deleteByID(id : Int) {
+    suspend fun deleteByID(id: Int) {
         viagemDao.deleteByID(id)
     }
 
-    fun somaDespesasByViagem(idViagem : Int) : LiveData<Double> {
+    fun somaDespesasByViagem(idViagem: Int): LiveData<Double> {
         return viagemDao.somaDespesasByViagem(idViagem)
     }
 
@@ -51,16 +50,6 @@ class ViagemRepository(app: Application) {
     //val allViagensByUser : LiveData<List<PessoaViagem>> = viagemDao.getUsuarioComViagens() // select all
 
     // ???? val log : Int? = viagemDao.login(login = "", senha = "" )
-
-//    suspend fun findAll(): List<Pessoa> = pessoaDao.findAll()
-//
-//    suspend fun findById(id: Int) = pessoaDao.findById(id)
-//
-//    suspend fun delete(contato: Pessoa) = pessoaDao.delete(contato)
-//
-//    suspend fun login(login: String, senha: String): Int? = pessoaDao.login(login,senha)
-
-
 
 
 }

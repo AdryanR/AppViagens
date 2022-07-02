@@ -56,7 +56,6 @@ fun CadastroCompose(navController: NavHostController) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Image(
             painter = painterResource(com.example.appviagens.R.drawable.logo),
             contentDescription = "Imagem em circulo",
@@ -70,12 +69,12 @@ fun CadastroCompose(navController: NavHostController) {
                     CircleShape
                 )//optional
         )
-        Spacer(modifier = Modifier.padding(15.dp))
+        Spacer(modifier = Modifier.padding(13.dp))
         Text(
             text = "Cadastro",
             style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive)
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(25.dp))
         TextField(
             label = { Text(text = "Nome") },
             value = model.nome,
@@ -89,15 +88,23 @@ fun CadastroCompose(navController: NavHostController) {
         Spacer(modifier = Modifier.height(20.dp))
         PasswordField(value = model.senha, onChange = { model.senha = it })
         Spacer(modifier = Modifier.height(20.dp))
+        var confirmeSenha by remember { mutableStateOf("") }
         PasswordField(
-            value = model.senha,
-            onChange = { model.senha = it },
+            value = confirmeSenha,
+            onChange = { confirmeSenha = it },
             label = "Confirme a senha"
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(25.dp))
         val context = LocalContext.current
+        var button by remember { mutableStateOf(false) }
+        if (model.senha.equals(confirmeSenha) && !model.senha.equals("") && !confirmeSenha.equals("")) {
+            button = true
+        } else {
+            button = false
+        }
         Button(
+            enabled = button,
             onClick = {
                 Toast
                     .makeText(

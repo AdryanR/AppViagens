@@ -49,10 +49,10 @@ fun FormDespesaCompose(navController: NavHostController, idViagem: Int?, idDespe
             CategoriaViewModel = viewModel(
         factory = CategoriaViewModelFactory(app)
     )
-//    if (id != null && id > 0) {
-//        model.id = id
-//        model.findById(id)
-//    }
+    if (idDespesa != null && idDespesa > 0) {
+        model.id = idDespesa
+        model.findById(idDespesa)
+    }
     Scaffold(
         topBar = {
             if (idDespesa != null && idDespesa > 0) {
@@ -85,6 +85,7 @@ fun FormDespesaCompose(navController: NavHostController, idViagem: Int?, idDespe
 
             val categorias by modelC.findAll().observeAsState(listOf())
             var exp by remember { mutableStateOf(false) }
+            var selecionar by remember { mutableStateOf(true) }
             var selectedOption by remember { mutableStateOf("") }
             var selectedCategoriaID by remember { mutableStateOf(0) }
             val context = LocalContext.current
@@ -112,6 +113,16 @@ fun FormDespesaCompose(navController: NavHostController, idViagem: Int?, idDespe
                         ) {
                             Text(text = option.nome)
                         }
+                    }
+                }
+            }
+            if (idDespesa != null && idDespesa > 0 && selecionar) {
+                categorias.forEach { option ->
+                    Log.e("selectedCategoriaID", selectedCategoriaID.toString())
+                    selectedCategoriaID = model.categoriaID
+                    if (option.id == selectedCategoriaID) {
+                        selectedOption = option.nome
+                        selecionar = false
                     }
                 }
             }
@@ -184,24 +195,29 @@ fun FormDespesaCompose(navController: NavHostController, idViagem: Int?, idDespe
 
             var onSave by remember { mutableStateOf(false) }
             var catSalva by remember { mutableStateOf(true) }
+            var msg by remember { mutableStateOf(true) }
 
             if (onSave) {
-                if (idDespesa != null && idDespesa > 0) {
-                    Toast
-                        .makeText(
-                            context,
-                            "Despesa editada com sucesso!",
-                            Toast.LENGTH_SHORT
-                        )
-                        .show()
-                } else {
-                    Toast
-                        .makeText(
-                            context,
-                            "Despesa cadastrada a viagem com sucesso!",
-                            Toast.LENGTH_SHORT
-                        )
-                        .show()
+                if (msg) {
+                    if (idDespesa != null && idDespesa > 0) {
+                        Toast
+                            .makeText(
+                                context,
+                                "Despesa editada com sucesso!",
+                                Toast.LENGTH_SHORT
+                            )
+                            .show()
+                        msg = false
+                    } else {
+                        Toast
+                            .makeText(
+                                context,
+                                "Despesa cadastrada a viagem com sucesso!",
+                                Toast.LENGTH_SHORT
+                            )
+                            .show()
+                    }
+                    msg = false
                 }
                 // salvando e obtendo o ID da nova categoria ou escolhendo uma
                 if (selectedCategoriaID > 0) {

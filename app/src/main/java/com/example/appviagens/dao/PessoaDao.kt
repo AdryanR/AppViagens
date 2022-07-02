@@ -12,16 +12,16 @@ interface PessoaDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(pessoa: Pessoa)
 
-    @Delete
-    suspend fun delete(pessoa: Pessoa)
+//    @Delete
+//    suspend fun delete(pessoa: Pessoa)
+//
+//    @Query("select * from Pessoa order by nome")
+//    suspend fun findAll(): List<Pessoa>
+//
+//    @Query("select * from Pessoa c where c.id = :id")
+//    suspend fun findById(id: Int): Pessoa?
 
-    @Query("select * from Pessoa order by nome")
-    suspend fun findAll(): List<Pessoa>
-
-    @Query("select * from Pessoa c where c.id = :id")
-    suspend fun findById(id: Int): Pessoa?
-
-    @Query("select id from Pessoa c where c.login = :login and c.senha = :senha")
-    suspend fun login(login: String, senha: String): Int?
+    @Query("select * from Pessoa p where p.login = :login and p.senha = :senha")
+    suspend fun login(login: String, senha: String): Pessoa?
 
 }

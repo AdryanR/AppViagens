@@ -1,8 +1,10 @@
 package com.example.appviagens.telas
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.example.appviagens.ScreenManager
 
@@ -24,8 +26,22 @@ fun Controle() {
 //            EsqueciSenhaCompose(navController = navController)
 //        }
 
-        composable(ScreenManager.Home.route) {
-            HomeNavigation()
+        composable("home/{nameUser}/{UserID}",
+            arguments = listOf(
+                navArgument("nameUser") {
+                    type = NavType.StringType
+                },
+                navArgument("UserID") {
+                    type = NavType.IntType
+                }
+            )
+
+        ) {
+            val nameUser = it.arguments?.getString("nameUser")
+            val UserID = it.arguments?.getInt("UserID")
+            if (nameUser != null && UserID != null) {
+                HomeNavigation(nameUser, UserID)
+            }
         }
     }
 }
