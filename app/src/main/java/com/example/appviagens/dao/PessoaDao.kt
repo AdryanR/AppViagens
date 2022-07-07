@@ -12,6 +12,10 @@ interface PessoaDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(pessoa: Pessoa)
 
+    // insere os tipos de viagens caso não tenha ainda, que são fixos
+    @Query("INSERT OR IGNORE INTO tipoViagem (tipo) VALUES ('Lazer'),('Negócios')")
+    suspend fun InsertTiposViagens()
+
 //    @Delete
 //    suspend fun delete(pessoa: Pessoa)
 //

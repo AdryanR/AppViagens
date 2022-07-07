@@ -25,6 +25,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.appviagens.ScreenManager
+import com.example.appviagens.component.CircularProgressBarLoading
 import com.example.appviagens.component.CustomTopAppBar
 import com.example.appviagens.component.DatePickerDemo
 import com.example.appviagens.ui.theme.Gainsoro
@@ -69,6 +70,7 @@ fun FormDespesaCompose(navController: NavHostController, idViagem: Int?, idDespe
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            CircularProgressBarLoading()
             Spacer(modifier = Modifier.padding(6.dp))
             if (idDespesa != null && idDespesa > 0) {
                 Text(
@@ -224,7 +226,7 @@ fun FormDespesaCompose(navController: NavHostController, idViagem: Int?, idDespe
                     onSave = false
                     model.categoriaID = selectedCategoriaID
                     model.salvar()
-                    navController.navigate(ScreenManager.Despesas.route)
+                    navController.navigateUp()
                 } else {
                     if (catSalva) {
                         modelC.nome = selectedOption
@@ -235,7 +237,7 @@ fun FormDespesaCompose(navController: NavHostController, idViagem: Int?, idDespe
                     if (model.categoriaID > 0) {
                         onSave = false
                         model.salvar()
-                        navController.navigate(ScreenManager.Despesas.route)
+                        navController.navigateUp()
                     }
                 }
             }

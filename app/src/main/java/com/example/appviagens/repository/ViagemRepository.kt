@@ -10,12 +10,9 @@ class ViagemRepository(app: Application) {
 
     private val viagemDao: ViagemDao
 
-    //val allViagensByUser: LiveData<List<Viagem>>
-
     init {
         viagemDao = Connection
             .getDB(app).viagemDao()
-        //allViagensByUser = viagemDao.getViagensByUser() // select all
     }
 
     suspend fun save(viagem: Viagem) {
@@ -45,11 +42,6 @@ class ViagemRepository(app: Application) {
 //    suspend fun insertTipos(tipoviagem: TipoViagem) {
 //        viagemDao.insertTipos(tipoviagem)
 //    }
-
-
-    //val allViagensByUser : LiveData<List<PessoaViagem>> = viagemDao.getUsuarioComViagens() // select all
-
-    // ???? val log : Int? = viagemDao.login(login = "", senha = "" )
 
 
 }

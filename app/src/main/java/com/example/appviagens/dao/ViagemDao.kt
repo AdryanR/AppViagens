@@ -29,8 +29,4 @@ interface ViagemDao {
     fun somaDespesasByViagem(id: Int): LiveData<Double>
 
 
-//
-//    @Query("select id from Pessoa c where c.login = :login and c.senha = :senha")
-//    fun login(login: String, senha: String): Int?
-
 }

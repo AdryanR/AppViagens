@@ -29,6 +29,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.appviagens.R
 import com.example.appviagens.ScreenManager
+import com.example.appviagens.component.CircularProgressBarLoading
+import com.example.appviagens.component.CircularProgressBarLoadingLogin
 import com.example.appviagens.component.PasswordField
 import com.example.appviagens.model.Pessoa
 import com.example.appviagens.viewModel.*
@@ -65,7 +67,15 @@ fun LoginCompose(
     onSuccess: (Pessoa) -> Unit,
     navController: NavHostController
 ) {
+    val ctx = LocalContext.current
+    val app = ctx.applicationContext as Application
+    val model:
+            PessoaViewModel = viewModel(
+        factory = PessoaViewModelFactory(app)
+    )
+    val loading = model.loading.value
     Box(modifier = Modifier.fillMaxSize()) {
+        CircularProgressBarLoadingLogin(isLoading = loading)
         ClickableText(
             text = AnnotatedString("Cadastre-se"),
             modifier = Modifier
@@ -85,13 +95,6 @@ fun LoginCompose(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        val ctx = LocalContext.current
-        val app = ctx.applicationContext as Application
-        val model:
-                PessoaViewModel = viewModel(
-            factory = PessoaViewModelFactory(app)
-        )
 
         Image(
             painter = painterResource(R.drawable.logo),
@@ -121,7 +124,6 @@ fun LoginCompose(
         Spacer(modifier = Modifier.height(20.dp))
         val context = LocalContext.current
         var button by remember { mutableStateOf(false) }
-        var teste by remember { mutableStateOf(false) }
 
         if (!model.senha.equals("") && !model.login.equals("")) {
             button = true
@@ -132,7 +134,6 @@ fun LoginCompose(
         Button(
             enabled = button,
             onClick = {
-                teste = true
                 model.login(
                     onSucess = { onSuccess(it) },
                     onNotFound = {
@@ -157,7 +158,7 @@ fun LoginCompose(
         Spacer(modifier = Modifier.height(25.dp))
         ClickableText(
             text = AnnotatedString("Esqueceu a senha?"),
-            onClick = { navController.navigate(ScreenManager.EsqueciSenha.route) },
+            onClick = { /*navController.navigate(ScreenManager.EsqueciSenha.route)*/ },
             style = TextStyle(
                 fontSize = 14.sp,
                 fontFamily = FontFamily.Default

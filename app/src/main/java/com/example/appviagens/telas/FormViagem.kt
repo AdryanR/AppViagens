@@ -26,6 +26,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavHostController
 import com.example.appviagens.ScreenManager
+import com.example.appviagens.component.CircularProgressBarLoading
+import com.example.appviagens.component.CircularProgressBarLoadingLogin
 import com.example.appviagens.component.CustomTopAppBar
 import com.example.appviagens.component.DatePickerDemo
 import com.example.appviagens.model.Viagem
@@ -50,6 +52,7 @@ fun FormViagemCompose(navController: NavHostController, id: Int?, idUserLogged: 
         model.id = id
         model.findById(id)
     }
+
     Scaffold(
         topBar = {
             if (id != null && id > 0) {
@@ -66,6 +69,7 @@ fun FormViagemCompose(navController: NavHostController, id: Int?, idUserLogged: 
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            CircularProgressBarLoading()
             Spacer(modifier = Modifier.padding(6.dp))
             if (id != null && id > 0) {
                 Text(

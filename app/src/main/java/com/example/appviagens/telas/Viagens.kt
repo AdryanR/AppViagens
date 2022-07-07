@@ -24,6 +24,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -35,6 +36,7 @@ import androidx.navigation.compose.navArgument
 import androidx.navigation.navigation
 import com.example.appviagens.R
 import com.example.appviagens.component.AppBarTelas
+import com.example.appviagens.component.CircularProgressBarLoading
 import com.example.appviagens.ui.theme.Gainsoro
 import com.example.appviagens.model.Viagem
 import com.example.appviagens.viewModel.PessoaViewModel
@@ -63,7 +65,7 @@ fun ViagensCompose(navController: NavHostController, idUserLogged: Int) {
             Spacer(modifier = Modifier.padding(6.dp))
             Text(
                 text = "Hora de viajar?",
-                style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive)
+                style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive, textAlign = TextAlign.Center)
             )
             Spacer(modifier = Modifier.padding(7.dp))
             ListaViagens(navController = navController, idUserLogged)
@@ -123,6 +125,8 @@ fun ListaViagens(navController: NavHostController, idUserLogged: Int) {
 
     // passando ID do user logado
     val viagens by model.allViagensByUser(idUserLogged).observeAsState(listOf())
+    CircularProgressBarLoading()
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
@@ -200,7 +204,7 @@ fun ViagensView(
                     onClick = {
                         openDialog.value = false
                         aExcluir = false
-                        navController.navigate("form/" + viagem.id)
+                        navController.navigate("form/" + viagem.id + "/" + viagem.usuarioID)
                     }
                 ) {
                     Text(

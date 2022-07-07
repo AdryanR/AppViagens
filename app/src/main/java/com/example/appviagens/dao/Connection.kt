@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.appviagens.model.*
 
-@Database(entities = arrayOf(Pessoa::class, Viagem::class, TipoViagem::class, Despesa::class, CategoriaDespesa::class), version = 2)
+@Database(entities = arrayOf(Pessoa::class, Viagem::class, TipoViagem::class, Despesa::class, CategoriaDespesa::class), version = 5)
 abstract class Connection : RoomDatabase() {
 
     abstract fun pessoaDao(): PessoaDao
@@ -28,7 +28,7 @@ abstract class Connection : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context,
                     Connection::class.java,
-                    "dbAppViagens"
+                    "dbAppViagenss"
                 ).build()
                 connection = instance
                 return instance

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appviagens.model.Pessoa
 import com.example.appviagens.repository.PessoaRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PessoaViewModel(
@@ -18,6 +19,8 @@ class PessoaViewModel(
     var login by mutableStateOf("")
     var senha by mutableStateOf("")
 
+    var loading = mutableStateOf(false)
+
     fun salvar() {
         val pessoa = Pessoa(id, nome, login, senha)
         viewModelScope.launch {
@@ -27,12 +30,15 @@ class PessoaViewModel(
 
     fun login(onSucess: (Pessoa) -> Unit, onNotFound: () -> Unit) {
         viewModelScope.launch {
+            loading.value = true
+            delay(800)
             val pessoa = repository.login(login, senha)
             if (pessoa != null && pessoa.id != 0) {
                 onSucess(pessoa)
             } else {
                 onNotFound()
             }
+            loading.value = false
         }
     }
 

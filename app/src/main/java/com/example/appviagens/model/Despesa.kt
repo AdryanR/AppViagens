@@ -14,7 +14,7 @@ import androidx.room.*
             entity = Viagem::class,
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("viagemID"),
-            //onDelete = ForeignKey.CASCADE
+            onDelete = ForeignKey.CASCADE
         )]
 )
 data class Despesa(
@@ -30,11 +30,11 @@ data class Despesa(
 
 }
 
-data class DespesaCategoria(
-    @Embedded val categoria: CategoriaDespesa,
-    @Relation(
-        parentColumn = "id",
-        entityColumn = "categoriaID"
-    )
-    val despesas: Despesa
-)
+//data class DespesaCategoria(
+//    @Embedded val categoria: CategoriaDespesa,
+//    @Relation(
+//        parentColumn = "id",
+//        entityColumn = "categoriaID"
+//    )
+//    val despesas: Despesa
+//)

@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.rounded.CreditCard
 import androidx.compose.material.icons.rounded.Paid
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -34,14 +33,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.navigation
 import com.example.appviagens.R
+import com.example.appviagens.component.CircularProgressBarLoading
 import com.example.appviagens.component.CustomTopAppBar
-import com.example.appviagens.model.Despesa
-import com.example.appviagens.model.DespesaCategoria
+import com.example.appviagens.dao.DespesaDao
 import com.example.appviagens.ui.theme.Gainsoro
 import com.example.appviagens.viewModel.DespesaViewModel
 import com.example.appviagens.viewModel.DespesaViewModelFactory
-import com.example.appviagens.viewModel.ViagemViewModel
-import com.example.appviagens.viewModel.ViagemViewModelFactory
 import java.text.DecimalFormat
 
 @Composable
@@ -111,11 +108,14 @@ fun ListaDespesas(navController: NavHostController, idViagem: Int) {
             DespesaViewModel = viewModel(
         factory = DespesaViewModelFactory(app)
     )
+
     val despesas by model.allDespesasByViagem(idViagem).observeAsState(listOf())
+    CircularProgressBarLoading()
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         items(items = despesas) { d ->
+            Log.e("DESPESAS:", despesas.toString())
             DespesasView(navController = navController, d, model)
         }
     }
@@ -124,7 +124,7 @@ fun ListaDespesas(navController: NavHostController, idViagem: Int) {
 @Composable
 fun DespesasView(
     navController: NavHostController,
-    index: DespesaCategoria,
+    index: DespesaDao.DespesaCategoria,
     model: DespesaViewModel
 ) {
     val df = DecimalFormat("0.00")
@@ -148,7 +148,7 @@ fun DespesasView(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        model.deleteByID(index.despesas.id)
+                        model.deleteByID(index.id)
                         Toast
                             .makeText(
                                 context,
@@ -188,7 +188,7 @@ fun DespesasView(
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = {
-                        navController.navigate("formDespesaEditar/" + index.despesas.viagemID + "/" + index.despesas.id)
+                        navController.navigate("formDespesaEditar/" + index.viagemID + "/" + index.id)
                     },
                     onLongPress = {
                         aExcluir = true;
@@ -214,29 +214,29 @@ fun DespesasView(
                     .weight(1f)
             ) {
                 Text(
-                    text = index.categoria.nome,
+                    text = index.nome,
                     style = MaterialTheme.typography.h5,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.padding(3.dp))
                 Text(
-                    text = "Local: " + index.despesas.local,
+                    text = "Local: " + index.local,
                     style = MaterialTheme.typography.caption
                 )
                 Spacer(modifier = Modifier.padding(3.dp))
                 Text(
-                    text = "Data: " + index.despesas.data,
+                    text = "Data: " + index.data,
                     style = MaterialTheme.typography.caption
                 )
                 Spacer(modifier = Modifier.padding(3.dp))
                 Text(
-                    text = "Descrição: " + index.despesas.descricao,
+                    text = "Descrição: " + index.descricao,
                     style = MaterialTheme.typography.caption
                 )
                 Spacer(modifier = Modifier.padding(5.dp))
             }
             Text(
-                text = "R$ ${df.format(index.despesas.valor)}",
+                text = "R$ ${df.format(index.valor)}",
                 style = MaterialTheme.typography.h6,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)

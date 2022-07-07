@@ -17,6 +17,8 @@ class PessoaRepository(app: Application) {
     suspend fun save(pessoa: Pessoa) {
         if (pessoa.id == 0) {
             pessoaDao.insert(pessoa)
+            // insere os tipos de viagens caso não tenha ainda, que são fixos
+            pessoaDao.InsertTiposViagens()
         }
         else {
             pessoaDao.update(pessoa)

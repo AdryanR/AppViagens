@@ -1,14 +1,11 @@
 package com.example.appviagens.viewModel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.appviagens.dao.DespesaDao
 import com.example.appviagens.model.Despesa
-import com.example.appviagens.model.DespesaCategoria
-import com.example.appviagens.model.Viagem
 import com.example.appviagens.repository.DespesaRepository
 import kotlinx.coroutines.launch
 
@@ -24,7 +21,6 @@ class DespesaViewModel(
     var categoriaID by mutableStateOf(0)
     var viagemID by mutableStateOf(0)
 
-
     fun salvar() {
         val despesa = Despesa(id, descricao, valor, local, data, categoriaID, viagemID)
         viewModelScope.launch {
@@ -32,7 +28,7 @@ class DespesaViewModel(
         }
     }
 
-    fun allDespesasByViagem(viagemID: Int): LiveData<List<DespesaCategoria>> {
+    fun allDespesasByViagem(viagemID: Int): LiveData<List<DespesaDao.DespesaCategoria>> {
         return repository.allDespesasByViagem(viagemID)
     }
 

@@ -26,15 +26,4 @@ data class Viagem(
     val orcamento: Double,
     val tipoID: Int,
     val usuarioID: Int
-) {
-
-}
-
-//data class PessoaViagem(
-//    @Embedded val pessoa: Pessoa,
-//    @Relation(
-//        parentColumn = "id",
-//        entityColumn = "usuarioID"
-//    )
-//    val viagens: List<Viagem>
-//)
+)

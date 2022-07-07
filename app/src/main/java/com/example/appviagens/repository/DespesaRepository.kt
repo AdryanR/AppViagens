@@ -5,8 +5,6 @@ import androidx.lifecycle.LiveData
 import com.example.appviagens.dao.Connection
 import com.example.appviagens.dao.DespesaDao
 import com.example.appviagens.model.Despesa
-import com.example.appviagens.model.DespesaCategoria
-import com.example.appviagens.model.Viagem
 
 class DespesaRepository(app: Application) {
 
@@ -25,15 +23,15 @@ class DespesaRepository(app: Application) {
         }
     }
 
-    fun allDespesasByViagem(viagemID: Int): LiveData<List<DespesaCategoria>> {
+    fun allDespesasByViagem(viagemID: Int): LiveData<List<DespesaDao.DespesaCategoria>> {
         return despesaDao.allDespesasByViagem(viagemID)
     }
 
-    suspend fun findById(id: Int) : Despesa {
+    suspend fun findById(id: Int): Despesa {
         return despesaDao.findById(id)
     }
 
-    suspend fun deleteByID(id : Int) {
+    suspend fun deleteByID(id: Int) {
         despesaDao.deleteByID(id)
     }
 

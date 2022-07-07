@@ -13,10 +13,11 @@ class TipoViagemViewModel(
     private val repository: TipoViagemRepository
 ) : ViewModel() {
 
+    var id by mutableStateOf(0)
     var tipo by mutableStateOf("")
 
     fun salvar() {
-        val tipoViagem = TipoViagem(tipo)
+        val tipoViagem = TipoViagem(id,tipo)
         viewModelScope.launch {
             repository.save(tipoViagem)
         }
